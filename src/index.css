@@ -1,0 +1,222 @@
+@import 'tailwindcss';
+
+/* ───────── EMG · Editorial — "studio paper" tokens ─────────
+   The palette is inverted at the token level: `white` IS the ink and `black` IS the paper.
+   Every existing `text-white/70`, `border-white/15`, `bg-white text-black` in the page code
+   therefore renders as ink-on-paper without touching each page. Use `paper` / `ink` when a
+   literal colour is needed. */
+@theme {
+  --font-sans: 'Geist', 'Inter', system-ui, sans-serif;
+  --font-serif: 'Fraunces', 'Times New Roman', serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+
+  --color-white: #16130f;
+  --color-black: #f3efe8;
+  --color-paper: #f3efe8;
+  --color-paper-2: #e9e3d9;
+  --color-card: #faf8f4;
+  --color-ink: #16130f;
+  --color-ink-2: #23201b;
+  --color-accent: #c8381a;
+  --color-accent-soft: #e2603f;
+  --color-accent-deep: #9e2a12;
+  --color-ember: #c8381a;
+  --color-moss: #3f5a3c;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-quint: cubic-bezier(0.83, 0, 0.17, 1);
+}
+
+:root {
+  --dur-reveal: 1100ms;
+  color-scheme: light;
+}
+
+html {
+  background: var(--color-paper);
+  overflow-x: clip;
+}
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+}
+
+::selection {
+  background: var(--color-accent);
+  color: var(--color-paper);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* ───────── Type ───────── */
+.display {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  font-variation-settings: 'SOFT' 50, 'WONK' 0;
+  font-weight: 340;
+  letter-spacing: -0.035em;
+}
+.serif-i {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-variation-settings: 'SOFT' 100, 'WONK' 1;
+  letter-spacing: -0.02em;
+}
+.text-outline {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(22, 19, 15, 0.14);
+}
+
+/* ───────── Reveal system ───────── */
+.rv-word {
+  display: inline-block;
+  overflow: clip;
+  vertical-align: top;
+  padding: 0.06em 0.03em 0.14em;
+  margin: -0.06em -0.03em -0.14em;
+}
+/* Visible by default. Reveal.tsx (GSAP) sets the start state only once it runs. */
+.rv-word > span {
+  display: inline-block;
+  transform-origin: 0 100%;
+}
+
+/* ───────── Surfaces: paper sheets ───────── */
+.glass {
+  background: var(--color-card);
+  border: 1px solid rgba(22, 19, 15, 0.14);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.8) inset,
+    0 1px 2px rgba(22, 19, 15, 0.06),
+    0 18px 40px -22px rgba(22, 19, 15, 0.28);
+}
+.sheet {
+  background: var(--color-card);
+  border: 1px solid rgba(22, 19, 15, 0.08);
+  box-shadow:
+    0 1px 1px rgba(22, 19, 15, 0.05),
+    0 8px 16px -8px rgba(22, 19, 15, 0.12),
+    0 40px 70px -30px rgba(22, 19, 15, 0.35);
+}
+.spot {
+  position: relative;
+  isolation: isolate;
+}
+.spot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(380px circle at var(--mx, 50%) var(--my, 50%), rgba(200, 56, 26, 0.07), transparent 60%);
+  opacity: 0;
+  transition: opacity 400ms ease;
+  pointer-events: none;
+  z-index: -1;
+}
+.spot:hover::after {
+  opacity: 1;
+}
+
+/* fine ruled-paper backdrop */
+.ruled {
+  background-image:
+    linear-gradient(rgba(22, 19, 15, 0.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22, 19, 15, 0.045) 1px, transparent 1px);
+  background-size: 88px 88px;
+}
+
+/* paper grain, multiplied onto everything */
+.grain {
+  position: fixed;
+  inset: -50%;
+  z-index: 70;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.09 0 0 0 0 0.07 0 0 0 0 0.06 0 0 0 1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 1.4s steps(5) infinite;
+}
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  25% { transform: translate(-2%, 3%); }
+  50% { transform: translate(3%, -2%); }
+  75% { transform: translate(-3%, -3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* film strip sprockets */
+.sprockets {
+  background-image: radial-gradient(circle at 50% 50%, var(--color-paper) 0 3px, transparent 3.5px);
+  background-size: 18px 12px;
+  background-repeat: repeat-x;
+}
+.sprocket-holes {
+  background-image: linear-gradient(90deg, var(--color-paper) 0 10px, transparent 10px);
+  background-size: 22px 7px;
+  background-repeat: repeat-x;
+}
+
+/* ───────── Loops ───────── */
+@keyframes emg-marquee {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(-50%, 0, 0); }
+}
+@keyframes emg-marquee-rev {
+  from { transform: translate3d(-50%, 0, 0); }
+  to { transform: translate3d(0, 0, 0); }
+}
+@keyframes emg-pulse {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(2.4); opacity: 0; }
+}
+@keyframes spin-slow {
+  to { transform: rotate(360deg); }
+}
+@keyframes float-y {
+  0%, 100% { transform: translate3d(0, 0, 0); }
+  50% { transform: translate3d(0, -8px, 0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes rec {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.2; }
+}
+@keyframes curtain {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-100%); }
+}
+.emg-marquee { animation: emg-marquee var(--mq, 45s) linear infinite; }
+.emg-marquee-rev { animation: emg-marquee-rev var(--mq, 45s) linear infinite; }
+.emg-pulse { animation: emg-pulse 2.6s ease-out infinite; transform-origin: center; transform-box: fill-box; }
+.spin-slow { animation: spin-slow 30s linear infinite; }
+.float-y { animation: float-y 6s ease-in-out infinite; }
+.rec { animation: rec 1.4s ease-in-out infinite; }
+.curtain { animation: curtain 1s var(--ease-in-out-quint) 0.1s both; }
+
+select option { background: var(--color-card); color: var(--color-ink); }
+
+/* Typed tagline caret */
+.type-caret { animation: caret-blink 1s steps(1) infinite; }
+@keyframes caret-blink { 50% { opacity: 0; } }
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

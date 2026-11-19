@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360">
+  <rect width="900" height="360" fill="#0a0a0a"/>
+  <g transform="translate(70,70) scale(2.2)" fill="none">
+    <path d="M32 6 A26 26 0 0 1 54.5 45" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <path d="M51.5 49.5 A26 26 0 0 1 12.5 49.5" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <path d="M9.5 45 A26 26 0 0 1 27 6.5" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+    <path d="M26 21.5 L44 32 L26 42.5 Z" fill="#fff"/>
+    <circle cx="54.5" cy="45" r="4.2" fill="#F2B84B"/>
+  </g>
+  <text x="250" y="160" font-family="Inter, DejaVu Sans, sans-serif" font-size="92" font-weight="600" letter-spacing="-3" fill="#fff">EMG</text>
+  <text x="254" y="200" font-family="Inter, DejaVu Sans, sans-serif" font-size="17" letter-spacing="4.5" fill="#ffffff" fill-opacity="0.75">EXCLUSIVE MULTIMEDIA GROUP</text>
+  <text x="254" y="232" font-family="Inter, DejaVu Sans, sans-serif" font-size="13" letter-spacing="4" fill="#F2B84B">CREATE • CAPTURE • CONNECT</text>
+  <g transform="translate(70,300)" font-family="Inter, DejaVu Sans, sans-serif" font-size="12" letter-spacing="2">
+    <rect width="28" height="28" rx="6" fill="#0a0a0a" stroke="#fff" stroke-opacity="0.25"/>
+    <rect x="40" width="28" height="28" rx="6" fill="#F2B84B"/>
+    <rect x="80" width="28" height="28" rx="6" fill="#FF3B30"/>
+    <rect x="120" width="28" height="28" rx="6" fill="#fff"/>
+    <text x="170" y="19" fill="#fff" fill-opacity="0.55">INK #0A0A0A · SIGNAL AMBER #F2B84B · REC RED #FF3B30 · WHITE</text>
+  </g>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <!-- Lens ring split into 3 arcs: Create / Capture / Connect -->
+  <path d="M32 6 A26 26 0 0 1 54.5 45" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M51.5 49.5 A26 26 0 0 1 12.5 49.5" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <path d="M9.5 45 A26 26 0 0 1 27 6.5" stroke="#fff" stroke-width="3" stroke-linecap="round"/>
+  <!-- Play / capture triangle -->
+  <path d="M26 21.5 L44 32 L26 42.5 Z" fill="#fff"/>
+  <!-- Connect node / REC dot -->
+  <circle cx="54.5" cy="45" r="4.2" fill="#F2B84B"/>
+</svg>
