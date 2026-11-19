@@ -181,9 +181,9 @@ function Hero() {
           style={{ transform: 'translate3d(calc(var(--px, 0) * -18px), calc(var(--w) * -12vh), 0)' }}
         />
 
-        {/* the EMG monitor window */}
+        {/* the EMG monitor window: sits in front of the coast so the palms and skyline frame it without hiding the services */}
         <div
-          className="absolute left-1/2 top-0 h-[min(60vh,600px)] w-[min(1080px,92vw)]"
+          className="absolute left-1/2 top-0 z-[3] h-[min(60vh,600px)] w-[min(1080px,92vw)]"
           style={{ transform: 'translate3d(calc(-50% + var(--px, 0) * -24px), calc(60vh - var(--w) * 48vh + var(--py, 0) * -10px), 0)' }}
         >
           <Reveal delay={500} className="h-full">
@@ -249,7 +249,7 @@ function Hero() {
           </Reveal>
         </div>
 
-        {/* dark coast: palms + Monrovia skyline, in front of the window */}
+        {/* dark coast: palms + Monrovia skyline, behind the window */}
         <div
           aria-hidden="true"
           className="pointer-events-none absolute inset-x-0 top-full"
@@ -259,7 +259,7 @@ function Hero() {
           <div className="h-[60vh] bg-[#3a2219]" />
         </div>
         {/* paper dune: rises last and fastest, swallowing the scene into the page */}
-        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-full" style={{ transform: 'translate3d(0, calc(var(--d) * -125vh), 0)' }}>
+        <div aria-hidden="true" className="pointer-events-none absolute inset-x-0 top-full z-[4]" style={{ transform: 'translate3d(0, calc(var(--d) * -125vh), 0)' }}>
           <Ridge base={120} amp={70} seed={5.1} fill="var(--color-paper)" className="block h-[24vh] w-full" />
           <div className="-mt-px h-[110vh] bg-paper" />
         </div>
