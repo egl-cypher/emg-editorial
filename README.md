@@ -40,3 +40,32 @@ The site uses History-API routing. On the host, rewrite all paths to `index.html
 - [ ] **Verified projects / posts / team profiles / testimonials** → `PROJECTS`, `POSTS` (slots show "Awaiting verified content" until filled)
 - [ ] **Legal text** for Privacy, Terms and Cookie pages
 - [ ] Budget ranges on the proposal form are in US$. Adjust if needed.
+
+## Forms backend (`server/`)
+
+A small Node.js server (Express) receives the four website forms and also serves the built site, so the
+whole site runs as one Node app (e.g. a Hostinger Node.js website).
+
+| Form (page) | Endpoint | Files |
+|---|---|---|
+| Enquiry (Contact) | `POST /api/forms/enquiry` | `attachment`, optional |
+| Proposal (Request a Proposal) | `POST /api/forms/proposal` | `documents`, optional |
+| Careers registration (Careers) | `POST /api/forms/careers` | `file` (CV), required |
+| Partnership registration (Partnerships) | `POST /api/forms/partnership` | `file`, optional |
+
+- Validation per form (`server/schemas.mjs`), honeypot field, rate limit per IP (default 6 per 10 min).
+- Uploads: PDF, Word, PowerPoint, Excel, PNG, JPG, WebP; checked by extension, type and file signature;
+  10 MB each, max 5; stored under random names.
+- Storage: `data/submissions.jsonl` + `data/uploads/<id>/` (set `DATA_DIR`; back it up; it is git-ignored).
+- Email: team notification (with files) and optional acknowledgement via SMTP (`.env`). Without SMTP the
+  server still stores everything.
+- Admin (set `ADMIN_TOKEN`): `GET /api/admin/submissions`, `/api/admin/submissions.csv`,
+  `/api/admin/files/<id>/<file>` with `Authorization: Bearer <token>`.
+
+```bash
+cp .env.example .env   # then fill in SMTP, NOTIFY_TO, ADMIN_TOKEN
+npm run api            # form server on :8787 (the dev site proxies /api to it)
+npm run dev            # site on :5399
+npm test               # site + server tests
+npm run build && npm start   # production: site + API on PORT
+```

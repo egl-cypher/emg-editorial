@@ -6,7 +6,10 @@ import { mono } from './ui';
 /* ───────── Field primitives ───────── */
 
 const control =
-  'w-full rounded-lg border border-white/20 bg-card px-4 py-3 text-sm text-white placeholder:text-white/35 transition-colors duration-300 focus:border-accent focus:bg-card focus:outline-none';
+  'w-full rounded-lg border border-white/20 bg-card px-4 py-3 text-sm text-white placeholder:text-white/35 transition-colors duration-300 focus:border-accent focus:bg-card focus:outline-none aria-invalid:border-accent';
+
+/** File types the server accepts (server/files.mjs). */
+const ACCEPT = '.pdf,.doc,.docx,.ppt,.pptx,.xls,.xlsx,.png,.jpg,.jpeg,.webp';
 
 type FieldProps = { label: string; name: string; required?: boolean; optional?: boolean; hint?: string; full?: boolean };
 
@@ -73,7 +76,7 @@ export function Chips({ label, name, options, multiple }: { label: string; name:
   );
 }
 
-export function FileInput({ label, name, optional, hint }: { label: string; name: string; optional?: boolean; hint?: string }) {
+export function FileInput({ label, name, optional, hint, required }: { label: string; name: string; optional?: boolean; hint?: string; required?: boolean }) {
   const [files, setFiles] = useState<string>('');
   return (
     <div className="sm:col-span-2">
@@ -90,6 +93,8 @@ export function FileInput({ label, name, optional, hint }: { label: string; name
         name={name}
         type="file"
         multiple
+        accept={ACCEPT}
+        required={!optional && required}
         className="sr-only"
         onChange={(e) => setFiles(Array.from(e.target.files ?? []).map((f) => f.name).join(', '))}
       />
@@ -100,16 +105,31 @@ export function FileInput({ label, name, optional, hint }: { label: string; name
 
 /* ───────── Submission ───────── */
 
-async function submit(form: HTMLFormElement, kind: string) {
+type Result = { ok: boolean; message?: string; errors?: Record<string, string> };
+
+/** Sends a form to the EMG server (server/app.mjs): POST {formEndpoint}/{kind} as multipart/form-data. */
+async function submit(form: HTMLFormElement, kind: string): Promise<Result> {
   const data = new FormData(form);
-  data.set('form', kind);
   if (!CONTACT.formEndpoint) {
-    // No backend configured yet: simulate success so the flow can be reviewed.
+    // No backend configured: simulate success so the flow can be reviewed.
     await new Promise((r) => setTimeout(r, 600));
-    return true;
+    return { ok: true };
   }
-  const res = await fetch(CONTACT.formEndpoint, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
-  return res.ok;
+  const res = await fetch(`${CONTACT.formEndpoint.replace(/\/$/, '')}/${kind}`, { method: 'POST', body: data, headers: { Accept: 'application/json' } });
+  const body = (await res.json().catch(() => ({}))) as Result;
+  return { ok: res.ok && body.ok !== false, message: body.message, errors: body.errors };
+}
+
+/** Hidden spam trap: people never see or fill it; bots that fill every field are silently dropped. */
+function Honeypot() {
+  return (
+    <div aria-hidden="true" className="absolute -left-[9999px] h-px w-px overflow-hidden">
+      <label>
+        Leave this empty
+        <input type="text" name="company_website" tabIndex={-1} autoComplete="off" defaultValue="" />
+      </label>
+    </div>
+  );
 }
 
 function Confirmation({ message }: { message: string }) {
@@ -136,24 +156,55 @@ function SubmitButton({ children, busy }: { children: ReactNode; busy: boolean }
   );
 }
 
+type Issue = { name: string; label: string; message: string };
+
 function useSubmit(kind: string) {
   const [state, setState] = useState<'idle' | 'busy' | 'done' | 'error'>('idle');
+  const [issues, setIssues] = useState<Issue[]>([]);
+  const [message, setMessage] = useState<string | undefined>();
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const form = e.currentTarget;
+    form.querySelectorAll('[aria-invalid]').forEach((el) => el.removeAttribute('aria-invalid'));
+    setIssues([]);
+    setMessage(undefined);
     setState('busy');
     try {
-      setState((await submit(e.currentTarget, kind)) ? 'done' : 'error');
+      const r = await submit(form, kind);
+      if (r.ok) return setState('done');
+      const found = Object.entries(r.errors ?? {}).map(([name, msg]) => {
+        const el = form.querySelector<HTMLElement>(`[name="${name}"]`);
+        el?.setAttribute('aria-invalid', 'true');
+        const label = form.querySelector(`label[for="${name}"]`)?.firstChild?.textContent?.trim() || el?.closest('fieldset')?.querySelector('legend, span')?.textContent?.replace('*', '').trim() || name;
+        return { name, label, message: msg };
+      });
+      setIssues(found);
+      setMessage(r.message);
+      setState('error');
     } catch {
       setState('error');
     }
   };
-  return { state, onSubmit };
+  return { state, onSubmit, issues, message };
 }
 
-function ErrorNote() {
+function ErrorNote({ issues = [], message }: { issues?: Issue[]; message?: string }) {
+  if (issues.length)
+    return (
+      <div className="text-sm text-accent-soft" role="alert">
+        <p>{message ?? 'Please check the highlighted fields.'}</p>
+        <ul className="mt-1 list-disc pl-5">
+          {issues.map((i) => (
+            <li key={i.name}>
+              {i.label}: {i.message}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
   return (
-    <p className="text-sm text-accent-soft">
-      Something went wrong sending your message. Please try again, or call us on {CONTACT.phones[0]}.
+    <p className="text-sm text-accent-soft" role="alert">
+      {message ?? 'Something went wrong sending your message.'} Please try again, or call us on {CONTACT.phones[0]}.
     </p>
   );
 }
@@ -163,10 +214,11 @@ const services = DIVISIONS.map((d) => d.title);
 /* ───────── Website enquiry form (Contact page) ───────── */
 
 export function EnquiryForm({ confirm }: { confirm: string }) {
-  const { state, onSubmit } = useSubmit('enquiry');
+  const { state, onSubmit, issues, message } = useSubmit('enquiry');
   if (state === 'done') return <Confirmation message={confirm} />;
   return (
     <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
+      <Honeypot />
       <Input label="Full name" name="name" required />
       <Input label="Organisation or company" name="organisation" />
       <Input label="Email address" name="email" type="email" required />
@@ -180,7 +232,7 @@ export function EnquiryForm({ confirm }: { confirm: string }) {
       <Chips label="Preferred method of contact" name="contactMethod" options={['Email', 'Phone call', 'WhatsApp']} />
       <div className="flex flex-wrap items-center gap-4 pt-2 sm:col-span-2">
         <SubmitButton busy={state === 'busy'}>Send Enquiry</SubmitButton>
-        {state === 'error' && <ErrorNote />}
+        {state === 'error' && <ErrorNote issues={issues} message={message} />}
       </div>
     </form>
   );
@@ -191,7 +243,7 @@ export function EnquiryForm({ confirm }: { confirm: string }) {
 const STEPS = ['You', 'Project', 'Scope & timing', 'Budget & files'] as const;
 
 export function ProposalForm({ confirm, defaultService }: { confirm: string; defaultService?: string }) {
-  const { state, onSubmit } = useSubmit('proposal');
+  const { state, onSubmit, issues, message } = useSubmit('proposal');
   const [step, setStep] = useState(0);
 
   if (state === 'done') return <Confirmation message={confirm} />;
@@ -216,6 +268,7 @@ export function ProposalForm({ confirm, defaultService }: { confirm: string; def
 
   return (
     <form onSubmit={onSubmit} noValidate={false}>
+      <Honeypot />
       {/* progress */}
       <ol className="mb-10 grid grid-cols-4 gap-2">
         {STEPS.map((s, i) => (
@@ -301,7 +354,7 @@ export function ProposalForm({ confirm, defaultService }: { confirm: string; def
         >
           <ChevronLeft size={14} /> Back
         </button>
-        {state === 'error' && <ErrorNote />}
+        {state === 'error' && <ErrorNote issues={issues} message={message} />}
         {step < STEPS.length - 1 ? (
           <button
             type="button"
@@ -333,10 +386,11 @@ export function InterestForm({
   confirm: string;
   cv?: boolean;
 }) {
-  const { state, onSubmit } = useSubmit(kind);
+  const { state, onSubmit, issues, message } = useSubmit(kind);
   if (state === 'done') return <Confirmation message={confirm} />;
   return (
     <form onSubmit={onSubmit} className="grid gap-5 sm:grid-cols-2">
+      <Honeypot />
       <Input label="Full name" name="name" required />
       <Input label={cv ? 'Current role or title' : 'Organisation'} name="organisation" required={!cv} />
       <Input label="Email address" name="email" type="email" required />
@@ -345,10 +399,10 @@ export function InterestForm({
       <Input label={cv ? 'Portfolio link' : 'Website'} name="link" type="url" optional placeholder="https://" />
       <Chips label={cv ? 'Areas of interest' : 'Partnership areas'} name="areas" options={areas} multiple />
       <TextArea label={cv ? 'Brief introduction' : 'Tell us about the partnership you have in mind'} name="message" required />
-      <FileInput label={cv ? 'CV or professional profile' : 'Company profile'} name="file" optional={!cv} />
+      <FileInput label={cv ? 'CV or professional profile' : 'Company profile'} name="file" optional={!cv} required={cv} />
       <div className="flex flex-wrap items-center gap-4 pt-2 sm:col-span-2">
         <SubmitButton busy={state === 'busy'}>{submitLabel}</SubmitButton>
-        {state === 'error' && <ErrorNote />}
+        {state === 'error' && <ErrorNote issues={issues} message={message} />}
       </div>
     </form>
   );

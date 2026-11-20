@@ -28,7 +28,7 @@ export const CONTACT = {
   footerPhones: ['+231 777 019 200', '+231 776 921 583'], // Footer section — differs from above
   email: '', // [Insert official EMG email address]
   whatsapp: '', // e.g. '231772350783'
-  formEndpoint: '', // POST endpoint for enquiry/proposal forms (e.g. Formspree, your CMS or API)
+  formEndpoint: '/api/forms', // the EMG server (server/app.mjs) receives POST /api/forms/<form>; '' = simulate (no backend)
 };
 
 export const NETWORK = [

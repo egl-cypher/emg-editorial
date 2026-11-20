@@ -36,7 +36,6 @@ export default function Home() {
   return (
     <>
       <Hero />
-      <FilmStrips />
       <Spread />
       <Deck />
       <DivisionIndex />
@@ -274,51 +273,13 @@ function Hero() {
   );
 }
 
-/* ───────── 2 · Crossing film strips ───────── */
-
-function FilmStrips() {
-  const ref = useScrollVar<HTMLElement>('through');
-  const divs = [...DIVISIONS, ...DIVISIONS];
-  const who = [...WHO_WE_SUPPORT, ...WHO_WE_SUPPORT];
-  return (
-    <section ref={ref} className="relative z-10 -mt-[38vh] overflow-clip pb-20 pt-10 md:pb-28" aria-label="Our divisions">
-      {/* back strip */}
-      <div className="relative -mx-[5vw] w-[110vw] rotate-[2.2deg] bg-accent py-1.5" style={{ translate: 'calc((var(--p, 0) - 0.5) * 18vw) 0' }}>
-        <ul className="emg-marquee-rev flex w-max" style={{ '--mq': '70s' } as Vars} aria-hidden="true">
-          {who.map((w, i) => (
-            <li key={i} className={`${mono} flex items-center gap-6 whitespace-nowrap px-5 py-2 text-[11px] text-black`}>
-              {w} <span className="h-1.5 w-1.5 rotate-45 bg-black" />
-            </li>
-          ))}
-        </ul>
-      </div>
-      {/* front strip: a real piece of film */}
-      <div
-        className="relative z-10 -mx-[5vw] -mt-8 w-[110vw] -rotate-[2.5deg] bg-ink shadow-[0_30px_60px_-30px_rgba(22,19,15,0.6)]"
-        style={{ translate: 'calc((var(--p, 0) - 0.5) * -14vw) 0' }}
-      >
-        <div className="sprocket-holes h-[7px] translate-y-2 opacity-90" />
-        <ul className="emg-marquee flex w-max py-5" style={{ '--mq': '55s' } as Vars}>
-          {divs.map((d, i) => (
-            <li key={i} className="flex items-center gap-8 whitespace-nowrap px-8 text-black" aria-hidden={i >= DIVISIONS.length || undefined}>
-              <span className={`${mono} text-[10px] text-accent-soft`}>{d.index}</span>
-              <span className={`text-[clamp(1.8rem,3.6vw,3.2rem)] leading-none ${i % 2 ? 'serif-i' : 'display'}`}>{d.title}</span>
-              <span className="text-accent-soft">✳</span>
-            </li>
-          ))}
-        </ul>
-        <div className="sprocket-holes h-[7px] -translate-y-2 opacity-90" />
-      </div>
-    </section>
-  );
-}
-
 /* ───────── 3 · Magazine spread ───────── */
 
 function Spread() {
   const ref = useScrollVar<HTMLElement>('through');
+  // -mt pulls the section up over the hero's paper hand-off so no empty screen sits between them
   return (
-    <section ref={ref} className={`${pad} relative py-20 md:py-32`}>
+    <section ref={ref} className={`${pad} relative z-10 -mt-[63vh] py-20 md:-mt-[72vh] md:py-32`}>
       <div className="grid gap-16 lg:grid-cols-12 lg:gap-10">
         <div className="lg:col-span-7">
           <Reveal className={`${mono} mb-8 flex items-center gap-4 border-t border-white/15 pt-3 text-[10px] text-white/60`}>

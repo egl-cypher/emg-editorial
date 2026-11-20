@@ -17,3 +17,8 @@ Thumbs.db
 *.log
 .env
 .env.*
+
+# form server: submissions, uploads and secrets stay on the server
+data/
+.env
+!.env.example
