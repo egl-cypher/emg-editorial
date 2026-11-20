@@ -9,7 +9,7 @@ export default function Partnerships() {
   useDocumentTitle('Partnerships');
   return (
     <>
-      <PageHero
+      <PageHero art="route"
         crumbs={[{ label: 'About EMG', to: '/about' }, { label: 'Partnerships' }]}
         badge="Partnerships"
         title={

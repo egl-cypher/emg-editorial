@@ -5,6 +5,7 @@ import { Link } from '../lib/router';
 import { ChevronRight } from 'lucide-react';
 import { useScrollVar } from '../lib/motion';
 import { Ridge } from './Diorama';
+import CardArt, { type ArtName } from './CardArt';
 import MarqueeBackdrop from './MarqueeBackdrop';
 
 /** Framed print: a paper mount with a warm dark plate inside, used as a physical layer.
@@ -13,16 +14,20 @@ export function Print({
   className = '',
   caption,
   style,
+  art,
 }: {
   className?: string;
   grade?: string;
   pos?: string;
   caption?: string;
   style?: React.CSSProperties;
+  /** Which code-drawn design fills the plate (see CardArt). */
+  art?: ArtName;
 }) {
   return (
     <figure className={`sheet p-2 pb-8 ${className}`} style={style} aria-hidden="true">
       <div className="relative h-full w-full overflow-hidden bg-[radial-gradient(80%_80%_at_50%_30%,#6b4636,#1f1712_80%)]">
+        {art && <CardArt name={art} />}
       </div>
       {caption && <figcaption className={`${mono} absolute bottom-2.5 left-3 right-3 truncate text-[9px] text-white/60`}>{caption}</figcaption>}
     </figure>
@@ -42,6 +47,7 @@ export function PageHero({
   aside,
   children,
   ghost,
+  art = 'orbit',
 }: {
   crumbs?: { label: string; to?: string }[];
   badge: string;
@@ -49,6 +55,8 @@ export function PageHero({
   aside?: ReactNode;
   children?: ReactNode;
   ghost?: string;
+  /** Design for the front print; the back print always shows the Monrovia coast. */
+  art?: ArtName;
 }) {
   const ref = useScrollVar<HTMLElement>('through');
   const ghostWord = (ghost ?? badge).split(/[\s&·]+/)[0];
@@ -107,16 +115,16 @@ export function PageHero({
         {/* desktop: two prints at different depths */}
         <Reveal delay={300} className="relative hidden h-[340px] w-[300px] lg:block">
           <div className="absolute left-0 top-6" style={{ transform: 'translate3d(0, calc((var(--p,0) - 0.5) * -8vh), 0) rotate(-5deg)' }}>
-            <Print className="relative h-[230px] w-[180px]" grade="sepia(0.55) saturate(1.5)" pos="75% 50%" caption="Monrovia" />
+            <Print className="relative h-[230px] w-[180px]" grade="sepia(0.55) saturate(1.5)" pos="75% 50%" caption="Monrovia" art="coast" />
           </div>
           <div className="absolute right-0 top-0" style={{ transform: 'translate3d(0, calc((var(--p,0) - 0.5) * -18vh), 0) rotate(4deg)' }}>
-            <Print className="relative h-[290px] w-[220px]" grade="grayscale(1) contrast(1.15)" caption={`EMG — ${badge}`} />
+            <Print className="relative h-[290px] w-[220px]" grade="grayscale(1) contrast(1.15)" caption={`EMG — ${badge}`} art={art} />
           </div>
         </Reveal>
         {/* phone & tablet: one wide print */}
         <Reveal delay={300} className="lg:hidden">
           <div style={{ transform: 'rotate(-1.2deg)' }}>
-            <Print className="relative aspect-[16/9] w-full max-w-xl" grade="sepia(0.45) saturate(1.4)" caption={`EMG — ${badge}`} />
+            <Print className="relative aspect-[16/9] w-full max-w-xl" grade="sepia(0.45) saturate(1.4)" caption={`EMG — ${badge}`} art={art} />
           </div>
         </Reveal>
       </div>
@@ -218,10 +226,10 @@ export function CtaBand({
           </div>
           <div className="relative hidden h-[340px] lg:block">
             <div className="absolute right-[30%] top-6" style={{ transform: 'rotate(-7deg) translateY(calc((1 - var(--p,0)) * 60px))' }}>
-              <Print className="relative h-[260px] w-[210px]" grade="grayscale(1) contrast(1.2)" pos="30% 50%" caption="Capture" />
+              <Print className="relative h-[260px] w-[210px]" grade="grayscale(1) contrast(1.2)" pos="30% 50%" caption="Capture" art="viewfinder" />
             </div>
             <div className="absolute right-[4%] top-0" style={{ transform: 'rotate(5deg) translateY(calc((1 - var(--p,0)) * 110px))' }}>
-              <Print className="relative h-[280px] w-[220px]" grade="sepia(0.5) saturate(1.4)" pos="70% 50%" caption="Connect" />
+              <Print className="relative h-[280px] w-[220px]" grade="sepia(0.5) saturate(1.4)" pos="70% 50%" caption="Connect" art="route" />
             </div>
           </div>
         </div>

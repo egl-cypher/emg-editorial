@@ -11,7 +11,7 @@ export default function Insights() {
   const posts = cat === 'All' ? POSTS : POSTS.filter((p) => p.category === cat);
   return (
     <>
-      <PageHero
+      <PageHero art="browser"
         crumbs={[{ label: 'Home', to: '/' }, { label: 'Insights & News' }]}
         badge="Insights & News"
         title={

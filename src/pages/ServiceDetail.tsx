@@ -1,5 +1,6 @@
 import Reveal from '../components/Reveal';
 import { CtaBand, PageHero, Section } from '../components/Sections';
+import { artForDivision } from '../components/CardArt';
 import { Button, Panel, mono } from '../components/ui';
 import type { Division, SubService } from '../data/site';
 import { Link } from '../lib/router';
@@ -19,6 +20,7 @@ export default function ServiceDetail({ dv, sub }: { dv: Division; sub: SubServi
         badge={dv.title}
         title={sub.title}
         aside={sub.description}
+        art={artForDivision(dv.slug)}
       >
         <div className="flex flex-wrap gap-3">
           <Button to={`/request-a-proposal?service=${dv.slug}`}>Request a Proposal</Button>

@@ -9,7 +9,7 @@ export default function Careers() {
   useDocumentTitle('Careers & Professional Network');
   return (
     <>
-      <PageHero
+      <PageHero art="course"
         crumbs={[{ label: 'About EMG', to: '/about' }, { label: 'Careers' }]}
         badge="Careers & Professional Network"
         title={

@@ -11,7 +11,7 @@ export default function Industries() {
   const [open, setOpen] = useState<number | null>(0);
   return (
     <>
-      <PageHero
+      <PageHero art="route"
         crumbs={[{ label: 'Home', to: '/' }, { label: 'Industries We Serve' }]}
         badge="Industries We Serve"
         title={

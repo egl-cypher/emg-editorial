@@ -10,7 +10,7 @@ export default function Services() {
   useDocumentTitle('Our Services');
   return (
     <>
-      <PageHero
+      <PageHero art="orbit"
         crumbs={[{ label: 'Home', to: '/' }, { label: 'Our Services' }]}
         badge="Services Overview"
         title={

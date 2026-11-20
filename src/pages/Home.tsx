@@ -10,6 +10,7 @@ import { CtaBand, Print, Section } from '../components/Sections';
 import { Coast, Ridge } from '../components/Diorama';
 import { LensMark } from '../components/Wordmark';
 import ShowreelModal, { SHOWREEL_POSTER, SHOWREEL_SRC } from '../components/ShowreelModal';
+import CardArt, { StepArt, artForDivision } from '../components/CardArt';
 import { Button, PendingSlot, mono, pad } from '../components/ui';
 import { ABOUT, DIVISIONS, HOME, NETWORK, PROJECTS, WHO_WE_SUPPORT, WORK } from '../data/site';
 import { Link } from '../lib/router';
@@ -346,10 +347,10 @@ function Spread() {
         {/* stacked prints: three depths */}
         <div className="relative h-[460px] sm:h-[540px] lg:col-span-5 lg:h-auto">
           <div className="absolute left-[4%] top-[4%] w-[62%]" style={{ transform: 'translate3d(0, calc((var(--p, 0) - 0.5) * 40px), 0) rotate(-4deg)' }}>
-            <Print className="relative aspect-[4/5] w-full" grade="grayscale(1) contrast(1.15)" pos="40% 50%" caption="Monrovia" />
+            <Print className="relative aspect-[4/5] w-full" grade="grayscale(1) contrast(1.15)" pos="40% 50%" caption="Monrovia" art="coast" />
           </div>
           <div className="absolute right-[2%] top-[30%] w-[52%]" style={{ transform: 'translate3d(0, calc((var(--p, 0) - 0.5) * -110px), 0) rotate(5deg)' }}>
-            <Print className="relative aspect-[4/5] w-full" grade="sepia(0.55) saturate(1.5)" pos="75% 50%" caption="Accra · Lagos" />
+            <Print className="relative aspect-[4/5] w-full" grade="sepia(0.55) saturate(1.5)" pos="75% 50%" caption="Accra · Lagos" art="route" />
           </div>
           <div className="glass absolute bottom-[2%] left-[10%] max-w-[260px] rounded-[4px] p-5" style={{ transform: 'translate3d(0, calc((var(--p, 0) - 0.5) * -190px), 0) rotate(-2deg)' }}>
             <span className={`${mono} text-[9px] text-accent`}>Field note</span>
@@ -457,6 +458,7 @@ function DivisionIndex() {
           <div className={`h-full w-full transition-all duration-500 ease-[var(--ease-out-expo)] ${active >= 0 ? 'scale-100 opacity-100' : 'scale-75 opacity-0'}`}>
             <div className="sheet relative h-full w-full p-2 pb-14">
               <div className="relative h-full w-full overflow-hidden bg-[radial-gradient(80%_80%_at_50%_30%,#6b4636,#1f1712_80%)]">
+                {active >= 0 && <CardArt key={active} name={artForDivision(DIVISIONS[active].slug)} />}
               </div>
               <div className="absolute inset-x-3 bottom-3">
                 <span className={`${mono} text-[9px] text-accent`}>Division {active >= 0 ? DIVISIONS[active].index : ''}</span>
@@ -553,7 +555,8 @@ function Deck() {
                       transitionDuration={900}
                       className="block! w-full"
                     >
-                      <div className="relative aspect-video overflow-hidden rounded-[6px] bg-[radial-gradient(80%_80%_at_50%_30%,#6b4636,#1f1712_80%)]">
+                      <div className="relative aspect-video w-full overflow-hidden rounded-[6px] bg-[radial-gradient(80%_80%_at_50%_30%,#6b4636,#1f1712_80%)]">
+                        <CardArt name={artForDivision(c.slug)} />
                       </div>
                     </GlareHover>
                     <div className={`${mono} flex justify-between px-1 pt-1.5 text-[8px] text-black/60`}>
@@ -622,6 +625,9 @@ function ProcessDeal() {
                       Step {String(i + 1).padStart(2, '0')} / {String(n).padStart(2, '0')}
                     </span>
                     <span className="display text-6xl leading-none text-accent">{i + 1}</span>
+                  </div>
+                  <div className="-mx-1 my-2 sm:my-4">
+                    <StepArt step={i} />
                   </div>
                   <div>
                     <h3 className="display text-4xl leading-none sm:text-5xl">{s.title}.</h3>

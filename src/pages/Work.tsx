@@ -12,7 +12,7 @@ export default function Work() {
   const list = cat === 'Featured Projects' ? PROJECTS : PROJECTS.filter((p) => p.category === cat);
   return (
     <>
-      <PageHero crumbs={[{ label: 'Home', to: '/' }, { label: 'Our Work' }]} badge="Portfolio" title={WORK.title} aside={WORK.body} />
+      <PageHero art="viewfinder" crumbs={[{ label: 'Home', to: '/' }, { label: 'Our Work' }]} badge="Portfolio" title={WORK.title} aside={WORK.body} />
 
       <Section>
         <Reveal className="mb-8 flex flex-wrap gap-2" >

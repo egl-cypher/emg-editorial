@@ -10,7 +10,7 @@ export default function About() {
   useDocumentTitle('About EMG');
   return (
     <>
-      <PageHero
+      <PageHero art="orbit"
         crumbs={[{ label: 'Home', to: '/' }, { label: 'About EMG' }]}
         badge="About Us"
         title={

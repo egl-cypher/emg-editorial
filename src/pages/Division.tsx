@@ -1,5 +1,6 @@
 import Reveal from '../components/Reveal';
 import { CtaBand, PageHero, Section } from '../components/Sections';
+import { artForDivision } from '../components/CardArt';
 import { Button, IndexRow, Panel, TickList, mono } from '../components/ui';
 import { DIVISIONS, type Division as D } from '../data/site';
 import { Link } from '../lib/router';
@@ -17,6 +18,7 @@ export default function Division({ dv }: { dv: D }) {
         badge={`${dv.index} · ${dv.title}`}
         title={dv.headline}
         aside={dv.intro}
+        art={artForDivision(dv.slug)}
       >
         <div className="flex flex-wrap gap-3">
           <Button to={`/request-a-proposal?service=${dv.slug}`}>{dv.cta}</Button>

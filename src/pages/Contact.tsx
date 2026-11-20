@@ -10,7 +10,7 @@ export default function Contact() {
   useDocumentTitle('Contact');
   return (
     <>
-      <PageHero
+      <PageHero art="route"
         crumbs={[{ label: 'Home', to: '/' }, { label: 'Contact' }]}
         badge="Contact EMG"
         title={
