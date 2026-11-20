@@ -19,6 +19,6 @@ Thumbs.db
 .env.*
 
 # form server: submissions, uploads and secrets stay on the server
-data/
+/data/
 .env
 !.env.example
